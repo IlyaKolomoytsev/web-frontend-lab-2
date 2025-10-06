@@ -6,7 +6,7 @@ import { observeList } from './event-handlers.js';
 import { dispatchShowGetFakeEquipments, dispatchRemoveAllGroups, dispatchRemoveAllEquipments, dispatchRemoveGroup, dispatchRemoveEquipment, dispatchShowEditGroupForm, dispatchShowEditEquipmentForm, dispatchToggleEquipment } from './events.js';
 import { handleAddEquipment, handleAddEquipmentGroup, handleEditGroup, handleEditEquipment } from './form-handlers.js';
 import { Maybe, fragment } from './helpers.js';
-import { addIcon, backIcon, doneIcon, downloadIcon, editIcon, showIcon, progressIcon, removeIcon, hideIcon, homeIcon } from "./icons.js";
+import { addIcon, backIcon, rentedIcon, downloadIcon, editIcon, showIcon, stockIcon, removeIcon, hideIcon, homeIcon } from "./icons.js";
 
 export function renderNotFound() {
   return fragment/*html*/`
@@ -110,19 +110,19 @@ export function renderEquipments(group) {
             </div>
             <div class="dropdown__content-wrapper">
               <div class="dropdown__content">
-                <button class="button button_primary" onclick="${dispatchShowEditGroupForm({ groupId: group.id })}">
+                <button class="button button_primary" onclick="${dispatchShowEditGroupForm({groupId: group.id})}">
                   ${editIcon()}
                   Edit
                 </button>
-                <button class="button button_secondary" onclick="${dispatchShowGetFakeEquipments({ groupId: group.id })}">
+                <button class="button button_secondary" onclick="${dispatchShowGetFakeEquipments({groupId: group.id})}">
                   ${downloadIcon()}
                   Fake equipments
                 </button>
-                <button class="button button_danger" onclick="${dispatchRemoveAllEquipments({ groupId: group.id })}">
+                <button class="button button_danger" onclick="${dispatchRemoveAllEquipments({groupId: group.id})}">
                   ${removeIcon()}
                   Remove all
                 </button>
-                <button class="button button_danger" onclick="${dispatchRemoveGroup({ groupId: group.id })}">
+                <button class="button button_danger" onclick="${dispatchRemoveGroup({groupId: group.id})}">
                   ${removeIcon()}
                   Remove group
                 </button>
@@ -149,18 +149,18 @@ export function renderEquipments(group) {
       <div class="equipment-filter">
         <label class="equipment-filter__label">
           <span class="equipment-filter__label-text">Filter by status</span>
-          <select class="input" id="equipment-filter" name="done" onchange="window.dispatch?.call(null, 'filter-equipments', {groupId: ${group.id}, done: this.value})">
+          <select class="input" id="equipment-filter" name="done" onchange="window.dispatch?.call(null, 'filter-equipments', {groupId: ${group.id}, rented: this.value})">
             <option value="all" selected>All</option>
-            <option value="true">Done</option>
-            <option value="false">In progress</option>
+            <option value="true">Rented</option>
+            <option value="false">In stock</option>
           </select>
         </label>
       </div>
       <div class="equipments__list list">
         ${group.equipments.length === 0
-    ? /*html*/`<h5 class="no-entries">No entries yet. Add new one using the form above.</h5>`
+      ? /*html*/`<h5 class="no-entries">No entries yet. Add new one using the form above.</h5>`
       : getEquipmentsTemplate(group)
-    }
+  }
       </div>
     </div>
     `
@@ -179,15 +179,15 @@ export function getEquipmentsTemplate(group) {
   return equipments.map(equipment => {
     return /*html*/`
       <div class="list__item card equipment" data-id="${equipment.id}">
-        <div class="card__card-header card-header equipment-header ${equipment.done ? 'equipment-header_done' : ''}" 
+        <div class="card__card-header card-header equipment-header ${equipment.rented ? 'equipment-header_done' : ''}" 
           onclick="${dispatchToggleEquipment({ groupId: group.id, equipmentId: equipment.id })}">
-          <h3 class="card-title card__card-title equipment__title ${equipment.done ? 'equipment-title_done' : ''}">
+          <h3 class="card-title card__card-title equipment__title ${equipment.rented ? 'equipment-title_rented' : ''}">
             ${equipment.title}
           </h3>
           <h5 class="equipment__status status">
             Status:     
             <span class="status__text">
-              ${equipment.done ? `${doneIcon()} Done` : `${progressIcon()} In progress`}
+              ${equipment.rented ? `${rentedIcon()} Rented` : `${stockIcon()} In stock`}
             </span>        
           </h5>
           <div class="card__description description">${equipment.description}</div>
@@ -227,8 +227,8 @@ export function renderEditEquipmentForm(equipment) {
       <label class="edit-form__form-label form-label">
         <span class="edit-form__form-label-text">Edit status</span>
         <select class="input" name="done">
-          <option value="true" ${equipment.done ? 'selected' : ''}>Done</option>
-          <option value="false" ${!equipment.done ? 'selected' : ''}>In progress</option>
+          <option value="true" ${equipment.rented ? 'selected' : ''}>Rented</option>
+          <option value="false" ${!equipment.rented ? 'selected' : ''}>In stock</option>
         </select>
       </label>
       <button class="button button_primary" onclick="history.back()">

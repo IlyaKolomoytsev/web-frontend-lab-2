@@ -25,14 +25,14 @@ export function getEquipmentGroups() {
           id: 1,
           title: "Equipment 1 content 1",
           description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, alias.",
-          done: false,
+          rented: false,
           groupId: 1
         },
         {
           id: 2,
           title: "Equipment 1 content 2",
           description: "",
-          done: true,
+          rented: true,
           groupId: 1
         },
       ]
@@ -126,8 +126,8 @@ export async function getFakeEquipmentsForUser(id) {
       return {
         id: equipment.id,
         title: equipment.title,
-        description: equipment.completed ? 'Done' : 'In progress',
-        done: equipment.completed,
+        description: equipment.completed ? 'rented' : 'In stock',
+        rented: equipment.completed,
       };
     });
   } catch (err) {

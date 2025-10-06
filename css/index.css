@@ -278,8 +278,8 @@ body {
     cursor: pointer;
 }
 
-.equipment-title_done {
-    text-decoration: line-through;
+.equipment-title_rented {
+    color: var(--secondary-color);
 }
 
 .link {

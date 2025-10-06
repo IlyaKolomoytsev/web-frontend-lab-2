@@ -39,7 +39,7 @@ export function handleAddEquipment(event) {
       id: group.equipments.length + 1,
       title,
       description,
-      done: false,
+      rented: false,
       groupId
     };
     group.equipments.push(newEquipment);
@@ -64,7 +64,7 @@ export function handleEditEquipment(event) {
   if (!equipment) return;
   equipment.title = title;
   equipment.description = description;
-  equipment.done = done === 'true'
+  equipment.rented = done === 'true'
   saveEquipments();
   window.location.hash = `#/equipments/${groupId}`
 }
@@ -100,7 +100,7 @@ export async function handleGetFakeEquipments(event, callback) {
       if (callback) callback();
       Maybe.of(document.querySelector("#equipment-filter"))
         .bind(filter => filter instanceof HTMLSelectElement ? filter.value : null)
-        .bind(filter => equipments.filter(equipment => filter === 'all' || String(equipment.done) === filter))
+        .bind(filter => equipments.filter(equipment => filter === 'all' || String(equipment.rented) === filter))
         .do(equipments => {
           const equipmentList = document.querySelector(".equipments__list");
           if (!equipmentList) return null;

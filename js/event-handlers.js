@@ -5,7 +5,7 @@ import { getFakeUsers, getGroup, getEquipment, getEquipmentGroups, saveEquipment
 import { events, initDispatchEvent, on } from './events.js';
 import { handleGetFakeEquipments } from './form-handlers.js';
 import { Maybe, compose, getFullHeightOfChildren, initModalCloseHandler, removeAnimatedModal } from './helpers.js';
-import { doneIcon, hideIcon, progressIcon, showIcon } from './icons.js';
+import { rentedIcon, hideIcon, stockIcon, showIcon } from './icons.js';
 import { getEquipmentsTemplate, renderGetEquipmentsForm, renderModal } from './renders.js';
 
 export function handleDropdown(event) {
@@ -64,21 +64,21 @@ function handleShowEditEquipmentForm({ groupId, equipmentId }) {
 function handleToggleEquipment({ groupId, equipmentId }) {
   const equipment = getEquipment({ groupId, equipmentId });
   if (!equipment) return;
-  equipment.done = !equipment.done;
+  equipment.rented = !equipment.rented;
   saveEquipments();
   Maybe.of(document.querySelector(`.equipment[data-id="${equipmentId}"]`))
     .bind(equipmentElement => equipmentElement.querySelector(".equipment__title"))
-    .do(subtitle => subtitle.classList.toggle("equipment-title_done"))
+    .do(subtitle => subtitle.classList.toggle("equipment-title_rented"))
     .bind(() => document.querySelector(`.equipment[data-id="${equipmentId}"] .status__text`))
-    .do(status => status.innerHTML = equipment.done ? `${doneIcon()} Done` : `${progressIcon()} In progress`)
+    .do(status => status.innerHTML = equipment.rented ? `${rentedIcon()} Rented` : `${stockIcon()} In stock`)
     .bind(() => document.querySelector(`#equipment-filter`))
     .bind(filter => filter instanceof HTMLSelectElement ? filter.value : null)
     .do(filter => {
       if (filter === 'all') return;
       const equipmentElement = document.querySelector(`.equipment[data-id="${equipmentId}"]`);
       if (!equipmentElement) return;
-      if (filter === 'true' && !equipment.done) equipmentElement.remove();
-      else if (filter === 'false' && equipment.done) equipmentElement.remove();
+      if (filter === 'true' && !equipment.rented) equipmentElement.remove();
+      else if (filter === 'false' && equipment.rented) equipmentElement.remove();
     })
 }
 
@@ -168,7 +168,7 @@ function handleFilterEquipments({ groupId, done }) {
   if (!equipmentList) return;
   equipmentList.innerHTML = getEquipmentsTemplate({
     ...group,
-    equipments: group.equipments.filter(equipment => done === 'all' || String(equipment.done) === done),
+    equipments: group.equipments.filter(equipment => done === 'all' || String(equipment.rented) === done),
   });
 }
 
