@@ -63,7 +63,7 @@ type GetEquipmentParams = {
 
 type FilterEquipmentsParams = {
   groupId: number;
-  done: string;
+  rented: string;
 };
 
 type Equipment = {

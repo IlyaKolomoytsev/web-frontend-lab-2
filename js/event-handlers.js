@@ -161,14 +161,14 @@ function handleNoItems() {
 /**
  * @param {FilterEquipmentsParams} details
  */
-function handleFilterEquipments({ groupId, done }) {
+function handleFilterEquipments({ groupId, rented }) {
   const group = getGroup({ id: groupId });
   if (!group) return;
   const equipmentList = document.querySelector(".equipments__list");
   if (!equipmentList) return;
   equipmentList.innerHTML = getEquipmentsTemplate({
     ...group,
-    equipments: group.equipments.filter(equipment => done === 'all' || String(equipment.rented) === done),
+    equipments: group.equipments.filter(equipment => rented === 'all' || String(equipment.rented) === rented),
   });
 }
 
