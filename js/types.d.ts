@@ -2,27 +2,27 @@ interface Window {
   dispatch: (eventName: string, detail?: Record<string, any>) => void
 }
 
-type BaseTodoParams = {
+type BaseEquipmentParams = {
   groupId: number;
-  todoId: number;
+  equipmentId: number;
 };
 
-type ToggleTodoParams = BaseTodoParams
+type ToggleEquipmentParams = BaseEquipmentParams
 
-type RemoveTodoParams = BaseTodoParams
+type RemoveEquipmentParams = BaseEquipmentParams
 
-type EditTodoParams = BaseTodoParams & {
+type EditEquipmentParams = BaseEquipmentParams & {
   title: string;
   description: string;
 };
 
-type ShowEditTodoFormParams = BaseTodoParams;
+type ShowEditEquipmentFormParams = BaseEquipmentParams;
 
 type ShowEditGroupFormParams = {
   groupId: number;
 };
 
-type RemoveAllTodosParams = {
+type RemoveAllEquipmentsParams = {
   groupId: number;
 };
 
@@ -30,20 +30,20 @@ type RemoveGroupParams = {
   groupId: number;
 };
 
-type ShowGetFakeTodosParams = {
+type ShowGetFakeEquipmentsParams = {
   groupId: number;
 };
 
-type GroupHasNoTodosParams = {
+type GroupHasNoEquipmentsParams = {
   groupId: number;
 };
 
 type GetDataParams = {
   groupId: number;
-  todoId?: number | null;
+  equipmentId?: number | null;
 };
 
-type ServerTodo = {
+type ServerEquipment = {
   userId: number;
   id: number;
   title: string;
@@ -52,21 +52,21 @@ type ServerTodo = {
 
 type GetGroupParams = {
   id: number;
-  todos?: TodoGroups | null;
+  equipments?: EquipmentGroups | null;
 }
 
-type GetTodoParams = {
+type GetEquipmentParams = {
   groupId?: number | null;
-  todoId: number;
+  equipmentId: number;
   group?: Group | null;
 };
 
-type FilterTodosParams = {
+type FilterEquipmentsParams = {
   groupId: number;
   done: string;
 };
 
-type Todo = {
+type Equipment = {
   id: number;
   groupId: number;
   title: string;
@@ -78,10 +78,10 @@ type Group = {
   id: number;
   title: string;
   description: string;
-  todos: Todo[];
+  equipments: Equipment[];
 }
 
-type TodoGroups = Group[];
+type EquipmentGroups = Group[];
 
 type FakeUser = {
   id: number;

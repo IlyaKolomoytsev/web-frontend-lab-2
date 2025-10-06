@@ -1,12 +1,12 @@
 // @ts-check
 /// <reference path="./types.d.ts" />
 
-import { getFakeUsers, getGroup, getTodo, getTodoGroups, saveTodos } from './data.js';
+import { getFakeUsers, getGroup, getEquipment, getEquipmentGroups, saveEquipments } from './data.js';
 import { events, initDispatchEvent, on } from './events.js';
-import { handleGetFakeTodos } from './form-handlers.js';
+import { handleGetFakeEquipments } from './form-handlers.js';
 import { Maybe, compose, getFullHeightOfChildren, initModalCloseHandler, removeAnimatedModal } from './helpers.js';
 import { doneIcon, hideIcon, progressIcon, showIcon } from './icons.js';
-import { getTodosTemplate, renderGetTodosForm, renderModal } from './renders.js';
+import { getEquipmentsTemplate, renderGetEquipmentsForm, renderModal } from './renders.js';
 
 export function handleDropdown(event) {
   const dropdown = event.target.closest(".dropdown");
@@ -43,56 +43,56 @@ export const handleClick = compose(
  * @param {ShowEditGroupFormParams} params
  */
 function handleShowEditGroupForm({ groupId }) {
-  // history.pushState(null, '', `#/todos/edit?groupId=${groupId}&todoId=${todoId}`);
-  window.location.hash = `#/todos/${groupId}/edit`;
+  // history.pushState(null, '', `#/equipments/edit?groupId=${groupId}&equipmentId=${equipmentId}`);
+  window.location.hash = `#/equipments/${groupId}/edit`;
 }
 
 /**
  * 
- * @param {ShowEditTodoFormParams} params
+ * @param {ShowEditEquipmentFormParams} params
  */
-function handleShowEditTodoForm({ groupId, todoId }) {
-  // history.pushState(null, '', `#/todos/edit?groupId=${groupId}&todoId=${todoId}`);
-  window.location.hash = `#/todos/${groupId}/${todoId}/edit`;
+function handleShowEditEquipmentForm({ groupId, equipmentId }) {
+  // history.pushState(null, '', `#/equipments/edit?groupId=${groupId}&equipmentId=${equipmentId}`);
+  window.location.hash = `#/equipments/${groupId}/${equipmentId}/edit`;
 }
 
 /**
  * 
- * @param {ToggleTodoParams} details 
+ * @param {ToggleEquipmentParams} details 
  * @returns 
  */
-function handleToggleTodo({ groupId, todoId }) {
-  const todo = getTodo({ groupId, todoId });
-  if (!todo) return;
-  todo.done = !todo.done;
-  saveTodos();
-  Maybe.of(document.querySelector(`.todo[data-id="${todoId}"]`))
-    .bind(todoElement => todoElement.querySelector(".todo__title"))
-    .do(subtitle => subtitle.classList.toggle("todo-title_done"))
-    .bind(() => document.querySelector(`.todo[data-id="${todoId}"] .status__text`))
-    .do(status => status.innerHTML = todo.done ? `${doneIcon()} Done` : `${progressIcon()} In progress`)
-    .bind(() => document.querySelector(`#todo-filter`))
+function handleToggleEquipment({ groupId, equipmentId }) {
+  const equipment = getEquipment({ groupId, equipmentId });
+  if (!equipment) return;
+  equipment.done = !equipment.done;
+  saveEquipments();
+  Maybe.of(document.querySelector(`.equipment[data-id="${equipmentId}"]`))
+    .bind(equipmentElement => equipmentElement.querySelector(".equipment__title"))
+    .do(subtitle => subtitle.classList.toggle("equipment-title_done"))
+    .bind(() => document.querySelector(`.equipment[data-id="${equipmentId}"] .status__text`))
+    .do(status => status.innerHTML = equipment.done ? `${doneIcon()} Done` : `${progressIcon()} In progress`)
+    .bind(() => document.querySelector(`#equipment-filter`))
     .bind(filter => filter instanceof HTMLSelectElement ? filter.value : null)
     .do(filter => {
       if (filter === 'all') return;
-      const todoElement = document.querySelector(`.todo[data-id="${todoId}"]`);
-      if (!todoElement) return;
-      if (filter === 'true' && !todo.done) todoElement.remove();
-      else if (filter === 'false' && todo.done) todoElement.remove();
+      const equipmentElement = document.querySelector(`.equipment[data-id="${equipmentId}"]`);
+      if (!equipmentElement) return;
+      if (filter === 'true' && !equipment.done) equipmentElement.remove();
+      else if (filter === 'false' && equipment.done) equipmentElement.remove();
     })
 }
 
 /**
  * 
- * @param {RemoveTodoParams} details 
+ * @param {RemoveEquipmentParams} details 
  */
-function handleRemoveTodo({ groupId, todoId }) {
+function handleRemoveEquipment({ groupId, equipmentId }) {
   if (!confirm("Are you sure?")) return;
   Maybe.of(getGroup({ id: groupId }))
-    .do(group => group.todos = group.todos.filter(todo => todo.id !== Number(todoId)))
-    .do(() => saveTodos())
-    .bind(() => document.querySelector(`.todo[data-id="${todoId}"]`))
-    .do(todoElement => todoElement.remove());
+    .do(group => group.equipments = group.equipments.filter(equipment => equipment.id !== Number(equipmentId)))
+    .do(() => saveEquipments())
+    .bind(() => document.querySelector(`.equipment[data-id="${equipmentId}"]`))
+    .do(equipmentElement => equipmentElement.remove());
 }
 
 /**
@@ -101,9 +101,9 @@ function handleRemoveTodo({ groupId, todoId }) {
  */
 function handleRemoveGroup({ groupId }) {
   if (!confirm("Are you sure?")) return;
-  Maybe.of(getTodoGroups())
+  Maybe.of(getEquipmentGroups())
     .bind(groups => groups.filter(group => group.id !== Number(groupId)))
-    .do(groups => saveTodos(groups))
+    .do(groups => saveEquipments(groups))
     .bind(() => document.querySelector(`.group[data-id="${groupId}"]`))
     .do(groupElement => groupElement.remove())
     .catch(() => window.location.hash = "");
@@ -111,31 +111,31 @@ function handleRemoveGroup({ groupId }) {
 
 function handleRemoveAllGroups() {
   if (!confirm("Are you sure?")) return;
-  saveTodos([]);
+  saveEquipments([]);
   Maybe.of(document.querySelector(".groups__list"))
     .do(groupList => groupList.innerHTML = "");
 }
 
 /**
  * 
- * @param {RemoveAllTodosParams} details 
+ * @param {RemoveAllEquipmentsParams} details 
  */
-function handleRemoveAllTodos({ groupId }) {
+function handleRemoveAllEquipments({ groupId }) {
   if (!confirm("Are you sure?")) return;
   Maybe.of(getGroup({ id: groupId }))
-    .do(group => group.todos = [])
-    .do(() => saveTodos())
-    .bind(() => document.querySelector(".todos__list"))
-    .do(todoList => todoList.innerHTML = "");
+    .do(group => group.equipments = [])
+    .do(() => saveEquipments())
+    .bind(() => document.querySelector(".equipments__list"))
+    .do(equipmentList => equipmentList.innerHTML = "");
 }
 
 /**
  * 
- * @param {ShowGetFakeTodosParams} details 
+ * @param {ShowGetFakeEquipmentsParams} details 
  */
-async function handleShowGetFakeTodos({ groupId }) {
+async function handleShowGetFakeEquipments({ groupId }) {
   Maybe.of(await getFakeUsers())
-    .bind(users => renderModal(renderGetTodosForm(users, groupId)))
+    .bind(users => renderModal(renderGetEquipmentsForm(users, groupId)))
     .bind(modal => modal.querySelector(".modal"))
     .do(modal => {
       modal.classList.add("modal_enter");
@@ -144,7 +144,7 @@ async function handleShowGetFakeTodos({ groupId }) {
       const form = modal.querySelector("form");
       if (!form) return null;
       form.addEventListener("submit", (e) =>
-        handleGetFakeTodos(e, () => removeAnimatedModal(modal)))
+        handleGetFakeEquipments(e, () => removeAnimatedModal(modal)))
     })
     .catch(() => alert("Something went wrong. Try again later."))
 }
@@ -159,31 +159,31 @@ function handleNoItems() {
 }
 
 /**
- * @param {FilterTodosParams} details
+ * @param {FilterEquipmentsParams} details
  */
-function handleFilterTodos({ groupId, done }) {
+function handleFilterEquipments({ groupId, done }) {
   const group = getGroup({ id: groupId });
   if (!group) return;
-  const todoList = document.querySelector(".todos__list");
-  if (!todoList) return;
-  todoList.innerHTML = getTodosTemplate({
+  const equipmentList = document.querySelector(".equipments__list");
+  if (!equipmentList) return;
+  equipmentList.innerHTML = getEquipmentsTemplate({
     ...group,
-    todos: group.todos.filter(todo => done === 'all' || String(todo.done) === done),
+    equipments: group.equipments.filter(equipment => done === 'all' || String(equipment.done) === done),
   });
 }
 
 
 export function initCustomEvents() {
   initDispatchEvent();
-  on(events.toggleTodo, handleToggleTodo);
-  on(events.removeTodo, handleRemoveTodo);
+  on(events.toggleEquipment, handleToggleEquipment);
+  on(events.removeEquipment, handleRemoveEquipment);
   on(events.removeGroup, handleRemoveGroup);
   on(events.removeAllGroups, handleRemoveAllGroups);
-  on(events.removeAllTodos, handleRemoveAllTodos);
-  on(events.showGetFakeTodos, handleShowGetFakeTodos);
+  on(events.removeAllEquipments, handleRemoveAllEquipments);
+  on(events.showGetFakeEquipments, handleShowGetFakeEquipments);
   on(events.showEditGroupForm, handleShowEditGroupForm);
-  on(events.showEditTodoForm, handleShowEditTodoForm);
-  on(events.filterTodos, handleFilterTodos);
+  on(events.showEditEquipmentForm, handleShowEditEquipmentForm);
+  on(events.filterEquipments, handleFilterEquipments);
 }
 
 /**

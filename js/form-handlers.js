@@ -1,72 +1,72 @@
 // @ts-check
 /// <reference path="./types.d.ts" />
 
-import { getData, getFakeTodosForUser, getGroup, getTodo, getTodoGroups, saveTodos } from './data.js';
+import { getData, getFakeEquipmentsForUser, getGroup, getEquipment, getEquipmentGroups, saveEquipments } from './data.js';
 import { Maybe, sanitize } from './helpers.js';
-import { getTodoGroupsTemplate, getTodosTemplate } from './renders.js';
+import { getEquipmentGroupsTemplate, getEquipmentsTemplate } from './renders.js';
 
 /**
  * @param {Event} event 
  */
-export function handleAddTodoGroup(event) {
+export function handleAddEquipmentGroup(event) {
   const { values: { title, description } } = handleForm(event)
   if (title && description) {
-    const todos = getTodoGroups();
+    const equipments = getEquipmentGroups();
     const newGroup = {
-      id: todos.length + 1,
+      id: equipments.length + 1,
       title,
       description,
-      todos: [],
+      equipments: [],
     };
-    todos.push(newGroup);
-    saveTodos(todos);
+    equipments.push(newGroup);
+    saveEquipments(equipments);
     const groupsList = document.querySelector(".groups__list");
     if (!groupsList) return;
-    groupsList.insertAdjacentHTML("beforeend", getTodoGroupsTemplate([newGroup]));
+    groupsList.insertAdjacentHTML("beforeend", getEquipmentGroupsTemplate([newGroup]));
   }
 }
 
 /**
  * @param {Event} event 
  */
-export function handleAddTodo(event) {
+export function handleAddEquipment(event) {
   const { values: { title, description }, form } = handleForm(event)
   if (title && description) {
-    const groupId = form.closest(".todos")?.dataset?.groupId;
-    const { todos, group } = getData({ groupId });
+    const groupId = form.closest(".equipments")?.dataset?.groupId;
+    const { equipments, group } = getData({ groupId });
     if (!group) return;
-    const newTodo = {
-      id: group.todos.length + 1,
+    const newEquipment = {
+      id: group.equipments.length + 1,
       title,
       description,
       done: false,
       groupId
     };
-    group.todos.push(newTodo);
-    saveTodos(todos);
-    // check todo-filter
-    const todoFilter = document.querySelector("#todo-filter");
-    if (todoFilter instanceof HTMLSelectElement && todoFilter.value === "true") return;
-    const todoList = document.querySelector(".todos__list");
-    if (!todoList) return;
-    todoList.insertAdjacentHTML("beforeend", getTodosTemplate({ ...group, todos: [newTodo] }));
+    group.equipments.push(newEquipment);
+    saveEquipments(equipments);
+    // check equipment-filter
+    const equipmentFilter = document.querySelector("#equipment-filter");
+    if (equipmentFilter instanceof HTMLSelectElement && equipmentFilter.value === "true") return;
+    const equipmentList = document.querySelector(".equipments__list");
+    if (!equipmentList) return;
+    equipmentList.insertAdjacentHTML("beforeend", getEquipmentsTemplate({ ...group, equipments: [newEquipment] }));
   }
 }
 
 /**
  * @param {Event} event 
  */
-export function handleEditTodo(event) {
+export function handleEditEquipment(event) {
   const { values: { title, description, done }, form } = handleForm(event)
   const groupId = Number(form.dataset.groupId)
-  const todoId = Number(form.dataset.todoId)
-  const todo = getTodo({ groupId, todoId });
-  if (!todo) return;
-  todo.title = title;
-  todo.description = description;
-  todo.done = done === 'true'
-  saveTodos();
-  window.location.hash = `#/todos/${groupId}`
+  const equipmentId = Number(form.dataset.equipmentId)
+  const equipment = getEquipment({ groupId, equipmentId });
+  if (!equipment) return;
+  equipment.title = title;
+  equipment.description = description;
+  equipment.done = done === 'true'
+  saveEquipments();
+  window.location.hash = `#/equipments/${groupId}`
 }
 
 /**
@@ -75,36 +75,36 @@ export function handleEditTodo(event) {
 export function handleEditGroup(event) {
   const { values: { title, description }, form } = handleForm(event)
   const groupId = Number(form.dataset.groupId)
-  const group = getTodoGroups().find(group => group.id === groupId);
+  const group = getEquipmentGroups().find(group => group.id === groupId);
   if (!group) return;
   group.title = title;
   group.description = description;
-  saveTodos();
-  window.location.hash = `#/todos/${groupId}`
+  saveEquipments();
+  window.location.hash = `#/equipments/${groupId}`
 }
 
 /**
  * @param {Event} event 
  * @param {Function?} callback
  */
-export async function handleGetFakeTodos(event, callback) {
+export async function handleGetFakeEquipments(event, callback) {
   const { values: { userId }, form } = handleForm(event)
   const groupId = Number(form.dataset.groupId)
-  Maybe.of(await getFakeTodosForUser(Number(userId)))
-    .bind(todos => todos.map(todo => ({ ...todo, groupId })))
-    .do(todos => {
+  Maybe.of(await getFakeEquipmentsForUser(Number(userId)))
+    .bind(equipments => equipments.map(equipment => ({ ...equipment, groupId })))
+    .do(equipments => {
       const group = getGroup({ id: groupId });
       if (!group) return null;
-      group.todos = group.todos.concat(todos);
-      saveTodos();
+      group.equipments = group.equipments.concat(equipments);
+      saveEquipments();
       if (callback) callback();
-      Maybe.of(document.querySelector("#todo-filter"))
+      Maybe.of(document.querySelector("#equipment-filter"))
         .bind(filter => filter instanceof HTMLSelectElement ? filter.value : null)
-        .bind(filter => todos.filter(todo => filter === 'all' || String(todo.done) === filter))
-        .do(todos => {
-          const todoList = document.querySelector(".todos__list");
-          if (!todoList) return null;
-          todoList.insertAdjacentHTML("beforeend", getTodosTemplate({ ...group, todos }));
+        .bind(filter => equipments.filter(equipment => filter === 'all' || String(equipment.done) === filter))
+        .do(equipments => {
+          const equipmentList = document.querySelector(".equipments__list");
+          if (!equipmentList) return null;
+          equipmentList.insertAdjacentHTML("beforeend", getEquipmentsTemplate({ ...group, equipments }));
         })
     })
 }

@@ -23,16 +23,16 @@ export function on(eventName, callback) {
 }
 
 export const events = {
-  toggleTodo: "toggle-todo",
-  removeTodo: "remove-todo",
+  toggleEquipment: "toggle-equipment",
+  removeEquipment: "remove-equipment",
   removeGroup: "remove-group",
   removeAllGroups: "remove-all-groups",
-  removeAllTodos: "remove-all-todos",
-  showGetFakeTodos: "show-get-fake-todos",
-  showEditTodoForm: "show-edit-todo-form",
+  removeAllEquipments: "remove-all-equipments",
+  showGetFakeEquipments: "show-get-fake-equipments",
+  showEditEquipmentForm: "show-edit-equipment-form",
   showEditGroupForm: "show-edit-group-form",
-  groupHasNoTodos: "group-has-no-todos",
-  filterTodos: "filter-todos",
+  groupHasNoEquipments: "group-has-no-equipments",
+  filterEquipments: "filter-equipments",
 };
 
 /**
@@ -43,25 +43,25 @@ export function baseDispatch(eventName, details) {
   return `window.dispatch?.call(null, '${eventName}', ${toJson(details)})`
 }
 
-/** @type {(details: ToggleTodoParams) => void} */
-export const dispatchToggleTodo = partial(baseDispatch, events.toggleTodo);
+/** @type {(details: ToggleEquipmentParams) => void} */
+export const dispatchToggleEquipment = partial(baseDispatch, events.toggleEquipment);
 
-/** @type {(details: RemoveTodoParams) => void} */
-export const dispatchRemoveTodo = partial(baseDispatch, events.removeTodo);
+/** @type {(details: RemoveEquipmentParams) => void} */
+export const dispatchRemoveEquipment = partial(baseDispatch, events.removeEquipment);
 
 /** @type {(details: RemoveGroupParams) => void} */
 export const dispatchRemoveGroup = partial(baseDispatch, events.removeGroup);
 
 export const dispatchRemoveAllGroups = partial(baseDispatch, events.removeAllGroups);
 
-/** @type {(details: RemoveAllTodosParams) => void} */
-export const dispatchRemoveAllTodos = partial(baseDispatch, events.removeAllTodos);
+/** @type {(details: RemoveAllEquipmentsParams) => void} */
+export const dispatchRemoveAllEquipments = partial(baseDispatch, events.removeAllEquipments);
 
-/** @type {(details: ShowGetFakeTodosParams) => void} */
-export const dispatchShowGetFakeTodos = partial(baseDispatch, events.showGetFakeTodos);
+/** @type {(details: ShowGetFakeEquipmentsParams) => void} */
+export const dispatchShowGetFakeEquipments = partial(baseDispatch, events.showGetFakeEquipments);
 
-/** @type {(details: ShowEditTodoFormParams) => void} */
-export const dispatchShowEditTodoForm = partial(baseDispatch, events.showEditTodoForm);
+/** @type {(details: ShowEditEquipmentFormParams) => void} */
+export const dispatchShowEditEquipmentForm = partial(baseDispatch, events.showEditEquipmentForm);
 
 /** @type {(details: ShowEditGroupFormParams) => void} */
 export const dispatchShowEditGroupForm = partial(baseDispatch, events.showEditGroupForm);

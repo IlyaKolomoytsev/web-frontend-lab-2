@@ -2,35 +2,35 @@
 
 import { Maybe } from './helpers.js';
 
-export function getTodoGroupById(id) {
-  const todos = getTodoGroups();
-  return todos.find(group => group.id === Number(id));
+export function getEquipmentGroupById(id) {
+  const equipments = getEquipmentGroups();
+  return equipments.find(group => group.id === Number(id));
 }
 
-/** @type {TodoGroups | null} */
-let todoGroupsStore = null
+/** @type {EquipmentGroups | null} */
+let equipmentGroupsStore = null
 
 /**
  * 
  * @returns {Group[]}
  */
-export function getTodoGroups() {
-  const baseTodoGroups = [
+export function getEquipmentGroups() {
+  const baseEquipmentGroups = [
     {
       id: 1,
-      title: "Todolist 1",
+      title: "Equipmentlist 1",
       description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, alias.",
-      todos: [
+      equipments: [
         {
           id: 1,
-          title: "Todo 1 content 1",
+          title: "Equipment 1 content 1",
           description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, alias.",
           done: false,
           groupId: 1
         },
         {
           id: 2,
-          title: "Todo 1 content 2",
+          title: "Equipment 1 content 2",
           description: "",
           done: true,
           groupId: 1
@@ -38,19 +38,19 @@ export function getTodoGroups() {
       ]
     }
   ];
-  if (todoGroupsStore) return todoGroupsStore;
-  const todosFromStorage = localStorage.getItem("todos");
-  if (todosFromStorage) {
+  if (equipmentGroupsStore) return equipmentGroupsStore;
+  const equipmentsFromStorage = localStorage.getItem("equipments");
+  if (equipmentsFromStorage) {
     try {
       // @ts-ignore
-      todoGroupsStore = JSON.parse(todosFromStorage);
+      equipmentGroupsStore = JSON.parse(equipmentsFromStorage);
       // @ts-ignore
-      return todoGroupsStore;
+      return equipmentGroupsStore;
     } catch (e) {
-      localStorage.removeItem("todos");
+      localStorage.removeItem("equipments");
     }
   }
-  return baseTodoGroups;
+  return baseEquipmentGroups;
 }
 
 /**
@@ -58,26 +58,26 @@ export function getTodoGroups() {
  * @param {GetGroupParams} params
  * @returns 
  */
-export function getGroup({ id, todos = null }) {
-  return Maybe.of(todos ?? getTodoGroups())
-    .bind(todos => todos.find(group => group.id === Number(id)))
+export function getGroup({ id, equipments = null }) {
+  return Maybe.of(equipments ?? getEquipmentGroups())
+    .bind(equipments => equipments.find(group => group.id === Number(id)))
     .get();
 }
 
 /**
  * 
- * @param {GetTodoParams} params
+ * @param {GetEquipmentParams} params
  * @returns 
  */
-export function getTodo({ groupId = null, todoId, group = null }) {
+export function getEquipment({ groupId = null, equipmentId, group = null }) {
   if (groupId) return Maybe.of(group ?? getGroup({ id: groupId }))
-    .bind(group => group.todos.find(todo => todo.id === Number(todoId)))
+    .bind(group => group.equipments.find(equipment => equipment.id === Number(equipmentId)))
     .get();
-  return Maybe.of(getTodoGroups())
+  return Maybe.of(getEquipmentGroups())
     .bind(groups => {
       for (const group of groups) {
-        for (const todo of group.todos) {
-          if (todo.id === todoId) return todo
+        for (const equipment of group.equipments) {
+          if (equipment.id === equipmentId) return equipment
         }
       }
     })
@@ -89,45 +89,45 @@ export function getTodo({ groupId = null, todoId, group = null }) {
  * @param {GetDataParams} params
  * @returns 
  */
-export function getData({ groupId, todoId = null }) {
-  const todos = getTodoGroups();
-  const group = getGroup({ id: groupId, todos });
-  if (todoId === null) return { todos, group };
-  const todo = getTodo({
+export function getData({ groupId, equipmentId = null }) {
+  const equipments = getEquipmentGroups();
+  const group = getGroup({ id: groupId, equipments });
+  if (equipmentId === null) return { equipments, group };
+  const equipment = getEquipment({
     groupId,
-    todoId,
+    equipmentId,
     group,
   });
-  return { todos, group, todo };
+  return { equipments, group, equipment };
 }
 
 /**
  * 
- * @param {TodoGroups?} todoGroups 
+ * @param {EquipmentGroups?} equipmentGroups 
  */
-export function saveTodos(todoGroups = null) {
-  todoGroups ??= getTodoGroups();
-  // todoGroups.forEach(group => {
-  //   if (group.todos.length === 0) window.dispatch(events.groupHasNoTodos, { groupId: group.id });
+export function saveEquipments(equipmentGroups = null) {
+  equipmentGroups ??= getEquipmentGroups();
+  // equipmentGroups.forEach(group => {
+  //   if (group.equipments.length === 0) window.dispatch(events.groupHasNoEquipments, { groupId: group.id });
   // })
-  todoGroupsStore = todoGroups;
-  localStorage.setItem("todos", JSON.stringify(todoGroups));
+  equipmentGroupsStore = equipmentGroups;
+  localStorage.setItem("equipments", JSON.stringify(equipmentGroups));
 }
 
 /**
  * @param {number} id 
  */
-export async function getFakeTodosForUser(id) {
+export async function getFakeEquipmentsForUser(id) {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}/todos`);
-    /** @type {ServerTodo[]} */
-    const todos = await response.json();
-    return todos.map(todo => {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}/equipments`);
+    /** @type {ServerEquipment[]} */
+    const equipments = await response.json();
+    return equipments.map(equipment => {
       return {
-        id: todo.id,
-        title: todo.title,
-        description: todo.completed ? 'Done' : 'In progress',
-        done: todo.completed,
+        id: equipment.id,
+        title: equipment.title,
+        description: equipment.completed ? 'Done' : 'In progress',
+        done: equipment.completed,
       };
     });
   } catch (err) {

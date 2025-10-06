@@ -1,10 +1,10 @@
 // @ts-check
 /// <reference path="./types.d.ts" />
 
-import { getGroup, getTodo, getTodoGroupById } from './data.js';
+import { getGroup, getEquipment, getEquipmentGroupById } from './data.js';
 import { handleClick, initCustomEvents } from './event-handlers.js';
 import { Maybe, fixHeightForm } from './helpers.js';
-import { renderGroups, renderTodos, renderNotFound, renderEditTodoForm, renderEditGroupForm } from './renders.js';
+import { renderGroups, renderEquipments, renderNotFound, renderEditEquipmentForm, renderEditGroupForm } from './renders.js';
 import {initTheme} from "./theme.js";
 
 const stylesLink = document.createElement("link");
@@ -42,27 +42,27 @@ function router() {
   switch (true) {
     case hash === "":
       return renderGroups();
-    case /^#\/todos\/\d+\/edit/.test(hash):
-      return Maybe.of(hash.match(/^#\/todos\/(\d+)\/edit/))
+    case /^#\/equipments\/\d+\/edit/.test(hash):
+      return Maybe.of(hash.match(/^#\/equipments\/(\d+)\/edit/))
         .bind(([, groupId]) => getGroup({
           id: Number(groupId)
         }))
         .bind(group => renderEditGroupForm(group))
         .catch(() => renderNotFound())
         .get();
-    case /^#\/todos\/\d+\/\d+\/edit/.test(hash):
-      return Maybe.of(hash.match(/^#\/todos\/(\d+)\/(\d+)\/edit/))
-        .bind(([, groupId, todoId]) => getTodo({
+    case /^#\/equipments\/\d+\/\d+\/edit/.test(hash):
+      return Maybe.of(hash.match(/^#\/equipments\/(\d+)\/(\d+)\/edit/))
+        .bind(([, groupId, equipmentId]) => getEquipment({
           groupId: Number(groupId),
-          todoId: Number(todoId),
+          equipmentId: Number(equipmentId),
         }))
-        .bind(todo => renderEditTodoForm(todo))
+        .bind(equipment => renderEditEquipmentForm(equipment))
         .catch(() => renderNotFound())
         .get();
-    case hash.startsWith("#/todos/"):
+    case hash.startsWith("#/equipments/"):
       const id = hash.split("/")[2];
-      const group = getTodoGroupById(id);
-      if (group) return renderTodos(group);
+      const group = getEquipmentGroupById(id);
+      if (group) return renderEquipments(group);
       return renderNotFound();
     default:
       return renderNotFound();
