@@ -19,7 +19,7 @@ export function renderGroups() {
   const page = fragment/*html*/`
     <div class="groups">
       <div class="header">
-        <h1 class="title header__title">Groups of todos</h1>
+        <h1 class="title header__title">Groups of equipments</h1>
         <div class="header__toolbar toolbar">
           <button class="button button_danger" onclick="${dispatchRemoveAllGroups()}">
             ${removeIcon()}
@@ -136,7 +136,7 @@ export function renderTodos(group) {
         </div>
         <form class="todos__create-form create-form" style="height: ${group.todos.length === 0 ? 'auto' : 0}">
           <label class="create-form__form-label form-label">
-            <span class="create-form__form-label-text">Add new todo</span>
+            <span class="create-form__form-label-text">Add new equipment</span>
             <input class="input" type="text" placeholder="Add todo title" name="title" ${validation('title')}>
           </label>
           <label class="create-form__form-label form-label">
@@ -214,11 +214,11 @@ export function getTodosTemplate(group) {
  */
 export function renderEditTodoForm(todo) {
   const page = fragment/*html*/`
-    <h1 class="title container__title">Edit todo</h1>
+    <h1 class="title container__title">Edit equipment</h1>
     <form class="edit-form todo-edit-form" data-group-id=${todo.groupId} data-todo-id=${todo.id}>
       <label class="edit-form__form-label form-label">
-        <span class="edit-form__form-label-text">Edit todo title</span>
-        <input class="input" type="text" placeholder="Edit todo title" name="title" value="${todo.title}" ${validation('title')}>
+        <span class="edit-form__form-label-text">Edit equipment title</span>
+        <input class="input" type="text" placeholder="Edit equipment title" name="title" value="${todo.title}" ${validation('title')}>
       </label>
       <label class="edit-form__form-label form-label">
         <span class="edit-form__form-label-text">Edit description</span>
@@ -251,11 +251,11 @@ export function renderEditTodoForm(todo) {
  */
 export function renderEditGroupForm(group) {
   const page = fragment/*html*/`
-    <h1 class="title container__title">Edit todo</h1>
+    <h1 class="title container__title">Edit equipment</h1>
     <form class="edit-form todo-edit-form" data-group-id=${group.id}>
       <label class="edit-form__form-label form-label">
-        <span class="edit-form__form-label-text">Edit todo title</span>
-        <input class="input" type="text" placeholder="Edit todo title" name="title" value="${group.title}" ${validation('title')}>
+        <span class="edit-form__form-label-text">Edit equipment title</span>
+        <input class="input" type="text" placeholder="Edit equipment title" name="title" value="${group.title}" ${validation('title')}>
       </label>
       <label class="edit-form__form-label form-label">
         <span class="edit-form__form-label-text">Edit description</span>
