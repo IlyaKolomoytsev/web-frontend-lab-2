@@ -126,7 +126,7 @@ export async function getFakeEquipmentsForUser(id) {
       return {
         id: equipment.id,
         title: equipment.title,
-        description: equipment.completed ? 'rented' : 'In stock',
+        description: equipment.completed ? 'Rented' : 'In stock',
         rented: equipment.completed,
       };
     });
