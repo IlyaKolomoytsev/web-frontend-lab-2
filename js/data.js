@@ -119,7 +119,7 @@ export function saveEquipments(equipmentGroups = null) {
  */
 export async function getFakeEquipmentsForUser(id) {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}/equipments`);
+    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}/todos`);
     /** @type {ServerEquipment[]} */
     const equipments = await response.json();
     return equipments.map(equipment => {
